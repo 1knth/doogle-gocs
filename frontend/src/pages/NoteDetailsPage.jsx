@@ -5,7 +5,8 @@ import Editor from '../components/Editor.jsx';
 import Quill from 'quill';
 const Delta = Quill.import('delta');
 import {toast} from 'react-hot-toast';
-// import '../components/extra.css';
+import spinner from '../assets/ring-resize.svg';
+
 
 const NoteDetailsPage = () => {
   const [note, setNote] = useState(null);
@@ -15,7 +16,8 @@ const NoteDetailsPage = () => {
   const [lastChange, setLastChange] = useState();
   const [readOnly, setReadOnly] = useState(false);
   const [isSaved, setSaved] = useState(true);
-  const [title, setTitle] = useState(null);
+  const [title, setTitle] = useState("");
+  const [isTitle, setIsTitle] = useState(false);
 
   // Use a ref to access the quill instance directly
   const quillRef = useRef();
@@ -29,7 +31,6 @@ const NoteDetailsPage = () => {
         console.log(note);
         setNote(note);
         setTitle(note.title);
-        console.log(note.content.insert);
       } catch (error) {
         console.error("Error loading note: ", error);
       } finally {
@@ -38,38 +39,39 @@ const NoteDetailsPage = () => {
     }
     loadNote();
   }, []);
-
+  
   // for auto updates
   useEffect(() => {
-    if (!quillRef.current || !lastChange) return; 
+    if (!quillRef.current || (!isTitle && !lastChange)) return; 
     setSaved(false);
     const delayBounceFn = setTimeout(async () => {
       try {
         // objects containing array 'ops'
         // gets the ENTIRE contents of the doc -> entire formatted text
         const content = quillRef.current.getContents(); 
-        
+        const newTitle = title;
         // regular string of text of the content
         const getSnippet = () => {
-          if ( quillRef.current.getText().length > 75) return ( (quillRef.current.getText()).substring(0,75) );
+          if ( quillRef.current.getText().length > 50) return ( (quillRef.current.getText()).substring(0,50) );
           return (
             quillRef.current.getText()
           );
         }
-        const save = await saveNote(id, {ops: content.ops, snippet: getSnippet()});
-        console.log("save:", save);
+        await saveNote(id, {title: newTitle, ops: content.ops, snippet: getSnippet()});
       } catch (error) {
         toast.error("Error saving notes:"+ error);
       } finally {
+        setIsTitle(false);
         setSaved(true);
       }
 
-    }, 2000);
+    }, 4000);
     return () => clearTimeout(delayBounceFn);
-  }, [lastChange]);
+  }, [lastChange, title]);
 
   const getTitle = (e) => {
     console.log(title);
+    setIsTitle(true)
     return (
       setTitle(e.target.value)
     );
@@ -79,25 +81,25 @@ const NoteDetailsPage = () => {
     <>
       {isLoading 
       ? <h1>loading</h1>
-      : <article className="w-full min-h-100 flex flex-col text-black ">
-          <div className='flex h-20 flex-col justify-center ml-5 text-sm'>
-            <input className='text-5xl important font-bold' defaultValue={note?.title} onChange={(e) => getTitle(e)}/>
+      : <article className="w-full min-h-100 flex justify-center flex-col text-black mt-5 ">
+          <div className='flex h-20 flex-col justify-center text-sm mx-20'>
+            <input className='text-5xl important font-bold' value={title} onChange={(e) => getTitle(e)}/>
             {isSaved 
             ? <p className='opacity-40'>All changes saved.</p> 
-            : <div className="flex gap-2">
+            : <div className="opacity-60 flex items-center gap-2">
                 <p>Changes saving</p>
-                <img src={null} alt="loading" />
+                <img className='w-3'src={spinner} alt="loading" />
             </div>}
           </div>
-          <Editor
-            ref={quillRef}
-            readOnly={readOnly}
-            defaultValue={new Delta(note?.content.ops)}
-            onSelectionChange={setRange}
-            onTextChange={setLastChange}
-          />
-
-
+          <div className='mx-20'>
+            <Editor
+              ref={quillRef}
+              readOnly={readOnly}
+              defaultValue={new Delta(note?.content.ops)}
+              onSelectionChange={setRange}
+              onTextChange={setLastChange}
+            />
+          </div>
         </article>
       }
     </>

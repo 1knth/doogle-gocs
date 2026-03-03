@@ -29,8 +29,8 @@ const NoteList = () => {
                 }
                 
             } finally {
-                setLoading(false);
                 setLoadNotes(false);
+                setLoading(false);
             }
         }
         loadNotes();

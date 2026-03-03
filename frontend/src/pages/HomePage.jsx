@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import '../components/extra.css';
 import CreatePage from './CreatePage.jsx';
 import NoteList from '../components/NoteList.jsx';
@@ -25,7 +25,7 @@ const HomePage = () => {
                     </>}
                 </div>
                     <div className='flex justify-center'>
-                        <div className='rounded-xl bg-gray-100 flex flex-col my-10 w-11/12'>
+                        <div className='rounded-xl bg-gray-300 flex flex-col my-10 w-11/12'>
                             <div className='flex flex-col w-full p-20 gap-5 flex-grow'>
                                 <div className='z-10 h-20 rounded-xl px-4 flex flex-row justify-between items-center'>
                                     <div className='flex flex-row gap-3 items-center'>
