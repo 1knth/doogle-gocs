@@ -2,7 +2,7 @@ A note-taking application and Google Docs clone built with [Quill]('https://gith
 
 # Prerequisites
 - Node.js
-- MongoDB (local or Atlas)
+- MongoDB
 
 # Tech Stack
 **Frontend**
@@ -20,11 +20,10 @@ A note-taking application and Google Docs clone built with [Quill]('https://gith
 - CORS
  
  # Features
-- Create, edit, and delete notes
+- Create, read/edit, and delete notes
 - Rich text editing with Quill
-- Clean, modern UI with TailwindCSS + DaisyUI
 - Rate limiting protection
-- RESTful API
+- Save as docx
  
 
 # Installation
